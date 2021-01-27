@@ -57,7 +57,7 @@ class TaskListViewController: UITableViewController {
 //        let newTaskViewController = NewTaskViewController()
 //        newTaskViewController.modalPresentationStyle = .fullScreen
 //        present(newTaskViewController, animated: true)
-        showAlert(withTitle: "New Tasks", andMessage: "Вы хотите добавить новую задачу?")
+        showAlert(withTitle: "New Tasks", andMessage: "Write task here")
     }
     
     
@@ -121,5 +121,20 @@ extension TaskListViewController {
         content.text = task.name
         cell.contentConfiguration = content
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let action = UIContextualAction(style: .destructive, title: "Delete") {(action, view, completionHandler) in
+            let taskToRemove = self.tasks[indexPath.row]
+            self.context.delete(taskToRemove)
+            do {
+                try self.context.save()
+            }
+            catch let error {
+                print(error)
+            }
+            self.fetchData()
+        }
+        return UISwipeActionsConfiguration(actions: [action])
     }
 }
